@@ -1,0 +1,16 @@
+{
+  "name": "joyce",
+  "version": "0.0.0",
+  "description": "A JSON/YAML EL for Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Mac Heller-Ogden",
+  "license": "MIT",
+  "dependencies": {
+    "acorn": "^5.7.2",
+    "astring": "^1.3.1"
+  }
+}

@@ -58,14 +58,17 @@ const statements = {
 function parse(given) {
     if (Array.isArray(given)) {
         return given.reduce((acc, value) => {
-            if (isObject(value) && typeof value.type === 'string' && typeof value.statement === 'string') return [ ...acc, evaluate(statements[value.type](value.statement), acc) ];
+            if (isObject(value) && typeof value.type === 'string' && Array.isArray(value.statement)) return [ ...acc, evaluate(statements[value.type](...value.statement), acc) ];
             return [ ...acc, parse(value) ];
         }, []);
     }
-    if (given != null || typeof given === 'object') {
+    if (given != null && typeof given === 'object') {
         return Object.entries(given).reduce((acc, [ key, value ]) => {
-            if (isObject(value) && typeof value.type === 'string' && typeof value.statement === 'string') acc[key] = evaluate(statements[value.type](value.statement), acc);
-            acc[key] = parse(value);
+            if (isObject(value) && typeof value.type === 'string' && Array.isArray(value.statement)) {
+                acc[key] = evaluate(statements[value.type](...value.statement), acc);
+            } else {
+                acc[key] = parse(value);
+            }
             return acc;
         }, {});
     }

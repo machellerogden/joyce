@@ -1,7 +1,6 @@
 test-expression:
     type: 'BinaryExpression'
     statement:
-        left:
-            value: foo
-        right:
-            value: foo
+        - value: foo
+        - value: bar
+        - '=='

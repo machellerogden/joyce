@@ -1,6 +1,5 @@
-test-expression:
-    type: 'BinaryExpression'
-    statement:
-        - value: foo
-        - value: bar
-        - '=='
+foo: bar
+bar: Fn::Equals::Name(foo)::String(bar)
+baz:
+  qux:
+  - Fn::Equals::Name(foo)::String(bar)

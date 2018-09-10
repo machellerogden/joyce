@@ -1,6 +1,6 @@
 {
   "name": "joyce",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A JSON/YAML EL for Node.js",
   "main": "index.js",
   "scripts": {

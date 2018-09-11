@@ -1,5 +1,0 @@
-foo: bar
-bar: Fn::Equals::Name(foo)::String(bar)
-baz:
-  qux:
-  - Fn::Equals::Name(foo)::String(bar)

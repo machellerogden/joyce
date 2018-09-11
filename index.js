@@ -1,13 +1,10 @@
 'use strict';
 
-module.exports = load;
+module.exports = joyce;
 
 const parse = require('./lib/parse');
-const Globble = require('globble');
 
-function load(givenPatterns, searchFromRoot = false) {
-    return Globble(givenPatterns, searchFromRoot).map(({ data, ...rest }) => ({
-        ...rest,
-        data: parse(data)
-    }));
+function joyce(data, options = {}) {
+    const { prefix = 'Fn' } = options;
+    return parse(data, prefix);
 }

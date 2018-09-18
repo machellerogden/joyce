@@ -3,6 +3,7 @@
   "version": "0.0.7",
   "description": "An AST-based Expression Language",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha \"test/**/*.spec.js\""
   },

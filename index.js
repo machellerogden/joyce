@@ -10,7 +10,7 @@ if (!process.stdin.isTTY) {
     if (data != null) {
         try {
             process.stdout.write(JSON.stringify(compile(JSON.parse(data)), null, 4));
-        } catch {
+        } catch (e) {
             process.stderr.write('{"error":"invalid JSON"}');
         }
     }

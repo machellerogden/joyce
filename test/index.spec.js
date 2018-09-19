@@ -83,7 +83,7 @@ describe('Joyce', () => {
     it('and it works with strings... although, beats me why you would want context-less evaluation like this.', () => {
         expect(Joyce('Fn::Equals::String(foo)::String(foo)')).to.eql(true);
     });
-    it('and arrays... but again, why would anyone want this...', () => {
+    it.skip('and arrays... but again, why would anyone want this...', () => {
         expect(Joyce([
             'foo',
             'Fn::Equals::Ref(0)::String(foo)'

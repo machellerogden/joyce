@@ -6,8 +6,18 @@
 
 ## Installation
 
+### Local Installation
+
 ```sh
 npm i joyce
+```
+
+### Global Installation
+
+> Use the global install if you want to use the `joyce` command-line tool.
+
+```sh
+npm i -g joyce
 ```
 
 ## Usage
@@ -33,8 +43,6 @@ Joyce({
 
 ### A Shorthand Example
 
-> Joyce is optimized for usablity. Here's the same examples from above but this time using a shorthand syntax.
-
 ```js
 const Joyce = require('joyce');
 
@@ -50,9 +58,9 @@ Joyce({
 }
 ```
 
-### Kitchen Sink Example
+### More Examples
 
->
+> Refer to unit tests for even more examples.
 
 ```js
 const Joyce = require('joyce');
@@ -63,21 +71,18 @@ Joyce({
     bar: 'Fn::Equals::Ref(foo)::String(bar)',
 
     // when using shorthand... first argument becomes part of operation.
-    baz: 'Fn::Equals(bar)::Ref(foo)',
+    baz: 'Fn::Equals(foo)::String(bar)',
 
     qux: [ 1, 2, 3, 4 ],
 
-    xyzzy: 'Fn::Filter::Op(gte)::Ref(qux)::Number(3)',
+    xyzzy: 'Fn::Filter(qux)::Op(gte)::Number(3)',
 
-// and the shorthand...
-    uuddlrlrba: 'Fn::Filter(gte)::Ref(qux)::Number(2)',
-
-    bim: 'Fn::Join::String(-)::Ref(qux)',
+    bim: 'Fn::Join(qux)::String(-)',
 
     // shorthand again...
-    bam: 'Fn::Join(***)::Ref(qux)',
+    bam: 'Fn::Join(qux)::String(***)',
 
-    boom: 'Fn::Template(${0} is a ${1} name to use in an example)::Ref(foo)::String(terrible)'
+    boom: 'Fn::Template(${0}, a note to follow ${1})::Ref(foo)::String(foo)'
 });
 
 // returns...
@@ -90,6 +95,16 @@ Joyce({
     uuddlrlrba: [ 2, 3, 4 ],
     bim: '1-2-3-4',
     bam: '1***2***3***4',
-    boom: 'bar is a terrible name to use in an example'
+    boom: 'bar, a note to follow foo'
 }
 ```
+
+### Command-Line Usage
+
+```sh
+echo '{"foo":"bar","Fn::Equals(foo)::String(bar)"}' | joyce
+```
+
+### License
+
+MIT

@@ -1,6 +1,6 @@
 {
   "name": "joyce",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "An AST-based Expression Language",
   "main": "index.js",
   "bin": "index.js",

@@ -9,36 +9,75 @@ describe('Joyce', () => {
     it('works', () => {
         expect(Joyce({
             foo: 'bar',
-
-            // long-form usage
-            bar: 'Fn::Equals::Ref(foo)::String(bar)',
-
-            // shorthand usage
-            baz: 'Fn::Equals(bar)::Ref(foo)',
-
-            qux: [ 1, 2, 3, 4 ],
-
-            xyzzy: 'Fn::Filter::Op(gte)::Ref(qux)::Number(3)',
-
-            // same example using shorthand... first argument is becomes cast by the stated operation.
-            uuddlrlrba: 'Fn::Filter(gte)::Ref(qux)::Number(2)',
-
-            bim: 'Fn::Join::String(-)::Ref(qux)',
-
-            // shorthand again...
-            bam: 'Fn::Join(***)::Ref(qux)',
-
-            boom: 'Fn::Template(${0} is a ${1} name to use in an example)::Ref(foo)::String(terrible)'
+            bar: [ 1, 2, 3, 4, 5 ],
+            baz: 100,
+            qux: { "yes" : "no" },
+            xyzzy: [ "sis", "boom", "bah" ],
+            a: 'Fn::Equals::Ref(foo)::String(bar)',
+            b: 'Fn::Eq(a)::Boolean(true)',
+            c: 'Fn::StrictEquals(foo)::String(bar)',
+            d: 'Fn::NotEquals(foo)::String(bar)',
+            e: 'Fn::NotEq(foo)::String(bar)',
+            f: 'Fn::StrictNotEquals(foo)::String(bar)',
+            g: 'Fn::GreaterThan::Ref(baz)::Number(5)',
+            h: 'Fn::GT::Ref(baz)::Number(5)',
+            i: 'Fn::GreaterThanOrEqualTo::Ref(baz)::Number(5)',
+            j: 'Fn::LessThan::Ref(baz)::Number(5)',
+            k: 'Fn::LT::Ref(baz)::Number(5)',
+            l: 'Fn::LessThanOrEqualTo::Ref(baz)::Number(5)',
+            m: 'Fn::LTE::Ref(baz)::Number(5)',
+            n: 'Fn::Modulus::Ref(baz)::Number(5)',
+            o: 'Fn::Mod::Ref(baz)::Number(5)',
+            p: 'Fn::Add::Ref(baz)::Number(5)',
+            q: 'Fn::Concat(foo)::String(-bar)',
+            r: 'Fn::Subtract::Ref(baz)::Number(5)',
+            s: 'Fn::Multiply::Ref(baz)::Number(5)',
+            t: 'Fn::Divide::Ref(baz)::Number(5)',
+            u: 'Fn::Filter::Ref(bar)::Op(gte)::Number(3)',
+            v: 'Fn::Filter(bar)::Op(gte)::Number(2)',
+            w: 'Fn::Join::Ref(bar)::String(-)',
+            x: 'Fn::Join(xyzzy)::String(~~~)',
+            y: 'Fn::Template(${0}, a ${1} to follow foo)::Ref(foo)::String(note)'
+            //Every
+            //Some
+            //Find
+            //Map
+            //Sum
+            //Product
+            //FlatMap
+            //FlatSum
+            //FlatProduct
         })).to.eql({
             foo: 'bar',
-            bar: true,
-            baz: true,
-            qux: [ 1, 2, 3, 4 ],
-            xyzzy: [ 3, 4 ],
-            uuddlrlrba: [ 2, 3, 4 ],
-            bim: '1-2-3-4',
-            bam: '1***2***3***4',
-            boom: 'bar is a terrible name to use in an example'
+            bar: [ 1, 2, 3, 4, 5 ],
+            baz: 100,
+            qux: { "yes" : "no" },
+            xyzzy: [ "sis", "boom", "bah" ],
+            a: true,
+            b: true,
+            c: true,
+            d: false,
+            e: false,
+            f: false,
+            g: true,
+            h: true,
+            i: true,
+            j: false,
+            k: false,
+            l: false,
+            m: false,
+            n: 0,
+            o: 0,
+            p: 105,
+            q: 'bar-bar',
+            r: 95,
+            s: 500,
+            t: 20,
+            u: [ 3, 4, 5 ],
+            v: [ 2, 3, 4, 5 ],
+            w: '1-2-3-4-5',
+            x: 'sis~~~boom~~~bah',
+            y: 'bar, a note to follow foo'
         });
     });
     it('and it works with strings... although, beats me why you would want context-less evaluation like this.', () => {
@@ -76,80 +115,55 @@ describe('Joyce', () => {
     it('can filter things', () => {
         expect(Joyce({
             foo: [ 1, 2, 3 ],
-            bar: 'Fn::Filter(Equals)::Ref(foo)::Number(1)'
+            bar: 'Fn::Filter(foo)::Op(Equals)::Number(1)'
         })).to.eql({
             foo: [ 1, 2, 3 ],
             bar: [ 1 ]
         });
         expect(Joyce({
-            bar: 'Fn::Filter(Eq)::Array([1,2,3,4])::Number(1)'
+            bar: 'Fn::Filter::Array([1,2,3,4])::Op(Eq)::Number(1)'
         })).to.eql({
             bar: [ 1 ]
         });
         expect(Joyce({
-            bar: 'Fn::Filter(GT)::Array([1,2,3,4])::Number(1)'
+            bar: 'Fn::Filter::Array([1,2,3,4])::Op(GT)::Number(1)'
         })).to.eql({
             bar: [ 2, 3, 4 ]
         });
         expect(Joyce({
-            bar: 'Fn::Filter(GTE)::Array([1,2,3,4])::Number(1)'
+            bar: 'Fn::Filter::Array([1,2,3,4])::Op(GTE)::Number(1)'
         })).to.eql({
             bar: [ 1, 2, 3, 4 ]
         });
         expect(Joyce({
-            bar: 'Fn::Filter(LTE)::Array([1,2,3,4])::Number(2)'
+            bar: 'Fn::Filter::Array([1,2,3,4])::Op(lte)::Number(2)'
         })).to.eql({
             bar: [ 1, 2 ]
         });
         expect(Joyce({
-            bar: 'Fn::Filter(Mod)::Array([1,2,3,4])::Number(2)'
+            bar: 'Fn::Filter::Array([1,2,3,4])::Op(mod)::Number(2)'
         })).to.eql({
             bar: [ 1, 3 ]
         });
         expect(Joyce({
             foo: [ 1, 2, 3 ],
-            bar: 'Fn::Filter::Op(Equals)::Ref(foo)::Number(1)'
+            bar: 'Fn::Filter::Ref(foo)::Op(Equals)::Number(1)'
         })).to.eql({
             foo: [ 1, 2, 3 ],
             bar: [ 1 ]
-        });
-        expect(Joyce({
-            bar: 'Fn::Filter::Op(Eq)::Array([1,2,3,4])::Number(1)'
-        })).to.eql({
-            bar: [ 1 ]
-        });
-        expect(Joyce({
-            bar: 'Fn::Filter::Op(GT)::Array([1,2,3,4])::Number(1)'
-        })).to.eql({
-            bar: [ 2, 3, 4 ]
-        });
-        expect(Joyce({
-            bar: 'Fn::Filter::Op(GTE)::Array([1,2,3,4])::Number(1)'
-        })).to.eql({
-            bar: [ 1, 2, 3, 4 ]
-        });
-        expect(Joyce({
-            bar: 'Fn::Filter::Op(LTE)::Array([1,2,3,4])::Number(2)'
-        })).to.eql({
-            bar: [ 1, 2 ]
-        });
-        expect(Joyce({
-            bar: 'Fn::Filter::Op(Mod)::Array([1,2,3,4])::Number(2)'
-        })).to.eql({
-            bar: [ 1, 3 ]
         });
     });
     it('can join things', () => {
         expect(Joyce({
             foo: [ 'foo', 'bar', 'baz' ],
-            bar: 'Fn::Join::String(-)::Ref(foo)'
+            bar: 'Fn::Join(foo)::String(-)'
         })).to.eql({
             foo: [ 'foo', 'bar', 'baz' ],
             bar: 'foo-bar-baz'
         });
         expect(Joyce({
             foo: [ 'foo', 'bar', 'baz' ],
-            bar: 'Fn::Join(-)::Ref(foo)'
+            bar: 'Fn::Join(foo)::String(-)'
         })).to.eql({
             foo: [ 'foo', 'bar', 'baz' ],
             bar: 'foo-bar-baz'
@@ -176,7 +190,7 @@ describe('Joyce', () => {
         expect(Joyce({
             foo: [ 'a', 'b', 'c' ],
             baz: 'Fn::Equals::Ref(bar)::String(a-b-c)',
-            bar: 'Fn::Join::String(-)::Ref(foo)'
+            bar: 'Fn::Join::Ref(foo)::String(-)'
         })).to.eql({
             foo: [ 'a', 'b', 'c' ],
             baz: true,

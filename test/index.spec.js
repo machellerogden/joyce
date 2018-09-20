@@ -90,7 +90,7 @@ describe('Joyce', () => {
     it('and it works with strings... although, beats me why you would want context-less evaluation like this.', () => {
         expect(Joyce('Fn::Equals::String(foo)::String(foo)')).to.eql(true);
     });
-    it.skip('and arrays... but again, why would anyone want this...', () => {
+    it('and arrays... but again, why would anyone want this...', () => {
         expect(Joyce([
             'foo',
             'Fn::Equals::Ref(0)::String(foo)'
@@ -113,7 +113,7 @@ describe('Joyce', () => {
         });
         expect(Joyce({
             foo: 'bar',
-            bar: '@Equals/Ref(foo)/String(bar)'
+            bar: '@Equals/Ref(foo)/bar'
         }, { prefix: '@', delim: '/' })).to.eql({
             foo: 'bar',
             bar: true
@@ -122,7 +122,7 @@ describe('Joyce', () => {
     it('can filter things', () => {
         expect(Joyce({
             foo: [ 1, 2, 3 ],
-            bar: 'Fn::Filter(foo)::Op(Equals)::Number(1)'
+            bar: 'Fn::Filter(foo)::Op(Equals)::1'
         })).to.eql({
             foo: [ 1, 2, 3 ],
             bar: [ 1 ]

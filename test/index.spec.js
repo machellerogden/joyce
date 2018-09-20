@@ -37,16 +37,15 @@ describe('Joyce', () => {
             v: 'Fn::Filter(bar)::Op(gte)::Number(2)',
             w: 'Fn::Join::Ref(bar)::String(-)',
             x: 'Fn::Join(xyzzy)::String(~~~)',
-            y: 'Fn::Template(${0}, a ${1} to follow foo)::Ref(foo)::String(note)'
-            //Every
-            //Some
-            //Find
-            //Map
-            //Sum
-            //Product
-            //FlatMap
-            //FlatSum
-            //FlatProduct
+            y: 'Fn::Template(${0}, a note to follow ${1})::Ref(foo)::String(foo)',
+            z: 'Fn::Every(bar)::Op(lt)::Number(6)',
+            aa: 'Fn::Every(bar)::Op(gt)::Number(5)',
+            bb: 'Fn::Some(bar)::Op(gte)::Number(5)',
+            cc: 'Fn::Some(bar)::Op(gt)::Number(5)',
+            dd: 'Fn::Find(xyzzy)::Op(eq)::String(boom)',
+            ee: 'Fn::Map(xyzzy)::Op(concat)::String(.png)',
+            ff: 'Fn::Sum(bar)',
+            gg: 'Fn::Product(bar)'
         })).to.eql({
             foo: 'bar',
             bar: [ 1, 2, 3, 4, 5 ],
@@ -77,7 +76,15 @@ describe('Joyce', () => {
             v: [ 2, 3, 4, 5 ],
             w: '1-2-3-4-5',
             x: 'sis~~~boom~~~bah',
-            y: 'bar, a note to follow foo'
+            y: 'bar, a note to follow foo',
+            z: true,
+            aa: false,
+            bb: true,
+            cc: false,
+            dd: 'boom',
+            ee: [ 'sis.png', 'boom.png', 'bah.png' ],
+            ff: 15,
+            gg: 120
         });
     });
     it('and it works with strings... although, beats me why you would want context-less evaluation like this.', () => {

@@ -31,7 +31,7 @@ const Joyce = require('joyce');
 
 Joyce({
     hello: 'world',
-    isWorld: 'Fn::Equals::Ref(hello)::String(world)'
+    isWorld: 'Fn::Eq(hello)::world'
 });
 
 // returns...
@@ -41,14 +41,20 @@ Joyce({
 }
 ```
 
-### A Shorthand Example
+### A Long Form Example
+
+Mostly you can count on the fact that the type for a given value will be
+properly inferred but there are cases in which you will need to do some explicit
+casting.
+
+Here's the same example again using the long-form operator and with all values explicitly cast to their corresponding types.
 
 ```js
 const Joyce = require('joyce');
 
 Joyce({
     hello: 'world',
-    isWorld: 'Fn::Equals(hello)::String(world)'
+    isWorld: 'Fn::Equals::Ref(hello)::String(world)'
 });
 
 // returns...
@@ -60,49 +66,31 @@ Joyce({
 
 ### More Examples
 
-> Refer to unit tests for even more examples.
+> Refer to [unit tests](test/index.spec.js) for many many more examples.
 
 ```js
 const Joyce = require('joyce');
 
 Joyce({
-    foo: 'bar',
-
-    bar: 'Fn::Equals::Ref(foo)::String(bar)',
-
-    // when using shorthand... first argument becomes part of operation.
-    baz: 'Fn::Equals(foo)::String(bar)',
-
-    qux: [ 1, 2, 3, 4 ],
-
-    xyzzy: 'Fn::Filter(qux)::Op(gte)::Number(3)',
-
-    bim: 'Fn::Join(qux)::String(-)',
-
-    // shorthand again...
-    bam: 'Fn::Join(qux)::String(***)',
-
-    boom: 'Fn::Template(${0}, a note to follow ${1})::Ref(foo)::String(foo)'
+    foo: [ 1, 2, 3, 4 ],
+    bar: 'Fn::Filter(foo)::GTE::3',
+    baz: 'Fn::Join(foo)::-',
+    qux: 'Fn::Template(${0}, a note to follow ${1})::Ref(foo)::foo'
 });
 
 // returns...
 {
-    foo: 'bar',
-    bar: true,
-    baz: true,
-    qux: [ 1, 2, 3, 4 ],
-    xyzzy: [ 3, 4 ],
-    uuddlrlrba: [ 2, 3, 4 ],
-    bim: '1-2-3-4',
-    bam: '1***2***3***4',
-    boom: 'bar, a note to follow foo'
+    foo: [ 1, 2, 3, 4 ],
+    bar: [ 3, 4 ],
+    baz: '1-2-3-4',
+    qux: 'bar, a note to follow foo'
 }
 ```
 
 ### Command-Line Usage
 
 ```sh
-echo '{"foo":"bar","Fn::Equals(foo)::String(bar)"}' | joyce
+echo '{"foo":"bar","Fn::Eq(foo)::bar"}' | joyce
 ```
 
 ### License

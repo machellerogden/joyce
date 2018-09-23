@@ -45,8 +45,8 @@ describe('Joyce', () => {
             cc: 'Fn::Some(bar)::gt::5',
             dd: 'Fn::Find(xyzzy)::eq::boom',
             ee: 'Fn::Map(xyzzy)::concat::.png',
-            //ff: 'Fn::Sum(bar)',
-            //gg: 'Fn::Product(bar)',
+            ff: 'Fn::Sum(bar)',
+            gg: 'Fn::Product(bar)',
             hh: 'Fn::Eq(oof)::"true"'
         })).to.eql({
             foo: 'bar',
@@ -86,8 +86,8 @@ describe('Joyce', () => {
             cc: false,
             dd: 'boom',
             ee: [ 'sis.png', 'boom.png', 'bah.png' ],
-            //ff: 15,
-            //gg: 120,
+            ff: 15,
+            gg: 120,
             hh: true
         });
     });

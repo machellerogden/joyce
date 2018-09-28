@@ -31,30 +31,7 @@ const Joyce = require('joyce');
 
 Joyce({
     hello: 'world',
-    isWorld: 'Fn::Eq(hello)::world'
-});
-
-// returns...
-{
-    hello: 'world',
-    isWorld: true
-}
-```
-
-### A Long Form Example
-
-Mostly you can count on the fact that the type for a given value will be
-properly inferred but there are cases in which you will need to do some explicit
-casting.
-
-Here's the same example again using the long-form operator and with all values explicitly cast to their corresponding types.
-
-```js
-const Joyce = require('joyce');
-
-Joyce({
-    hello: 'world',
-    isWorld: 'Fn::Equals::Ref(hello)::String(world)'
+    isWorld: 'eval == hello "world"'
 });
 
 // returns...
@@ -73,9 +50,9 @@ const Joyce = require('joyce');
 
 Joyce({
     foo: [ 1, 2, 3, 4 ],
-    bar: 'Fn::Filter(foo)::GTE::3',
-    baz: 'Fn::Join(foo)::-',
-    qux: 'Fn::Template(${0}, a note to follow ${1})::Ref(foo)::foo'
+    bar: 'eval filter foo >= 3',
+    baz: 'eval join foo "-"',
+    qux: 'eval template "${0}, a \"note\" to follow ${1}" foo "foo"'
 });
 
 // returns...
@@ -90,7 +67,15 @@ Joyce({
 ### Command-Line Usage
 
 ```sh
-echo '{"foo":"bar","Fn::Eq(foo)::bar"}' | joyce
+echo '{"foo":"bar","bar":"eval == foo \"bar\""}' | joyce
+```
+
+// outputs...
+```
+{
+    "foo": "bar",
+    "bar": true
+}
 ```
 
 ### License

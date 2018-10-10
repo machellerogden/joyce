@@ -22,7 +22,7 @@ npm i -g joyce
 
 ## Usage
 
-Joyce accepts any type of value. If that value happens to be or happens to contain a string which starts with a special prefix, then that string value will be parsed and evaluated within the context of the originally given value.
+Joyce accepts any type of value. If that value happens to have contain the pattern `((.+))` then the inner form of that pattern will be parsed and evaluated within the context of the originally given value.
 
 ### A Basic Example
 
@@ -31,7 +31,7 @@ const Joyce = require('joyce');
 
 Joyce({
     hello: 'world',
-    isWorld: 'eval == hello "world"'
+    isWorld: '((== hello "world"))'
 });
 
 // returns...
@@ -50,9 +50,9 @@ const Joyce = require('joyce');
 
 Joyce({
     foo: [ 1, 2, 3, 4 ],
-    bar: 'eval filter foo >= 3',
-    baz: 'eval join foo "-"',
-    qux: 'eval template "${0}, a \"note\" to follow ${1}" foo "foo"'
+    bar: '((filter >= foo 3))',
+    baz: '((join "-" foo))',
+    qux: '((template "${0}, a \"note\" to follow ${1}" foo "foo"))'
 });
 
 // returns...

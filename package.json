@@ -15,6 +15,10 @@
     "json"
   ],
   "author": "Mac Heller-Ogden",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/machellerogden/joyce.git"
+  },
   "license": "MIT",
   "dependencies": {
     "acorn": "^5.7.2",

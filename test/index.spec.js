@@ -52,9 +52,9 @@ describe('Joyce', () => {
             ii: '((join xyzzy))',
             jj: '((join "))" xyzzy))',
             kk: '((join "((foo))" xyzzy))',
-            ll: '((join ref("strange))") xyzzy))'
-            //mm: [ 'berry', 'pie' ],
-            //nn: 'foo ((join " " mm))',
+            ll: '((join ref("strange))") xyzzy))',
+            mm: [ 'berry', 'pie' ],
+            nn: 'foo ((join " " mm))',
         })).to.eql({
             foo: 'bar',
             oof: 'true',
@@ -100,9 +100,9 @@ describe('Joyce', () => {
             ii: 'sisboom ! ! !bah',
             jj: 'sis))boom ! ! !))bah',
             kk: 'sis((foo))boom ! ! !((foo))bah',
-            ll: 'sisbut trueboom ! ! !but truebah'
-            //mm: [ 'berry', 'pie' ],
-            //nn: 'foo berry pie'
+            ll: 'sisbut trueboom ! ! !but truebah',
+            mm: [ 'berry', 'pie' ],
+            nn: 'foo berry pie'
         });
     });
     it('and it works with strings...', () => {

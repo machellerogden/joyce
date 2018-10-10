@@ -52,7 +52,7 @@ Joyce({
     foo: [ 1, 2, 3, 4 ],
     bar: '((filter >= foo 3))',
     baz: '((join "-" foo))',
-    qux: '((template "${0}, a \"note\" to follow ${1}" foo "foo"))'
+    qux: '((foo)), a "note" to follow (("foo"))'
 });
 
 // returns...

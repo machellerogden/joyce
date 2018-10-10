@@ -33,7 +33,7 @@ describe('Joyce', () => {
             p: '((filter >= bar 2))',
             q: '((join "-" bar))',
             r: '((join "~~~" xyzzy))',
-            s: '((template "${0}, a \"note\" to follow ${1}" ref(foo) "foo"))',
+            s: '((foo)), a "note" to follow (("foo"))',
             t: '((every < bar 6))',
             u: '((Every > bar 5))',
             v: '((Some >= bar 5))',
@@ -190,20 +190,26 @@ describe('Joyce', () => {
             bar: 'a-b-c'
         });
     });
-    it('can render template strings...', () => {
+    it('can handle multiple expression in a single string', () => {
         expect(Joyce({
-            foo: 'bar',
-            baz: '((template "foo-${0}-${2}-${1}" foo "qux" "baz"))'
+            quake: 'daisy',
+            daisy: 'sky',
+            inhuman: '((quake)) (also know as ((daisy))) is an inhuman'
         })).to.eql({
-            foo: 'bar',
-            baz: 'foo-bar-baz-qux'
+            quake: 'daisy',
+            daisy: 'sky',
+            inhuman: 'daisy (also know as sky) is an inhuman'
         });
         expect(Joyce({
-            foo: 'bar',
-            baz: '((template "foo-${0}-${2}-${1}" ref(foo) string(qux) string(baz)))'
+            quake: 'daisy',
+            daisy: 'sky',
+            species: 'inhuman',
+            inhuman: '((quake)) (also know as (("dai))sy"))) is an ((species))'
         })).to.eql({
-            foo: 'bar',
-            baz: 'foo-bar-baz-qux'
+            quake: 'daisy',
+            daisy: 'sky',
+            species: 'inhuman',
+            inhuman: 'daisy (also know as dai))sy) is an inhuman'
         });
     });
 });

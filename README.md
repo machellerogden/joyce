@@ -67,7 +67,7 @@ Joyce({
 ### Command-Line Usage
 
 ```sh
-echo '{"foo":"bar","bar":"eval == foo \"bar\""}' | joyce
+echo '{"foo":"bar","bar":"((== foo \"bar\"))"}' | joyce
 ```
 
 // outputs...

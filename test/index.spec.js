@@ -9,7 +9,6 @@ describe('Joyce', () => {
     it('can compare values', () => {
         expect(Joyce({
             foo: 'bar',
-            oof: 'true',
             bar: [ 1, 2, 3, 4, 5 ],
             baz: 100,
             qux: { "yes" : "no" },
@@ -24,7 +23,6 @@ describe('Joyce', () => {
             h: '((<= baz 5))'
         })).to.eql({
             foo: 'bar',
-            oof: 'true',
             bar: [ 1, 2, 3, 4, 5 ],
             baz: 100,
             qux: { "yes" : "no" },
@@ -42,9 +40,8 @@ describe('Joyce', () => {
     it('can perform binary operations', () => {
         expect(Joyce({
             foo: 'bar',
-            oof: 'true',
             bar: [ 1, 2, 3, 4, 5 ],
-            baz: 100,
+            baz: 101,
             qux: { "yes" : "no" },
             xyzzy: [ "sis", "boom ! ! !", "bah" ],
             i: '((% baz 5))',
@@ -55,17 +52,16 @@ describe('Joyce', () => {
             n: '((/ baz 5))'
         })).to.eql({
             foo: 'bar',
-            oof: 'true',
             bar: [ 1, 2, 3, 4, 5 ],
-            baz: 100,
+            baz: 101,
             qux: { "yes" : "no" },
             xyzzy: [ "sis", "boom ! ! !", "bah" ],
-            i: 0,
-            j: 105,
+            i: 1,
+            j: 106,
             k: 'bar-bar',
-            l: 95,
-            m: 500,
-            n: 20
+            l: 96,
+            m: 505,
+            n: 20.2
         });
     });
     it('can filter', () => {
@@ -130,11 +126,7 @@ describe('Joyce', () => {
             baz: 100,
             qux: { "yes" : "no" },
             xyzzy: [ "sis", "boom ! ! !", "bah" ],
-            'strange))': "but true",
             cc: '((join xyzzy))',
-            dd: '((join "))" xyzzy))',
-            ee: '((join "((foo))" xyzzy))',
-            ff: '((join ref("strange))") xyzzy))',
             gg: [ 'berry', 'pie' ],
             hh: 'foo ((join " " gg))'
         })).to.eql({
@@ -143,11 +135,7 @@ describe('Joyce', () => {
             baz: 100,
             qux: { "yes" : "no" },
             xyzzy: [ "sis", "boom ! ! !", "bah" ],
-            'strange))': "but true",
             cc: 'sisboom ! ! !bah',
-            dd: 'sis))boom ! ! !))bah',
-            ee: 'sis((foo))boom ! ! !((foo))bah',
-            ff: 'sisbut trueboom ! ! !but truebah',
             gg: [ 'berry', 'pie' ],
             hh: 'foo berry pie'
         });
@@ -167,6 +155,21 @@ describe('Joyce', () => {
                 }
             },
             bar: true
+        });
+        expect(Joyce({
+            sis: {
+                boom: {
+                    bah: [ 'foo', 'bar', 'baz' ]
+                }
+            },
+            bar: '((sis.boom.bah[1]))'
+        })).to.eql({
+            sis: {
+                boom: {
+                    bah: [ 'foo', 'bar', 'baz' ]
+                }
+            },
+            bar: 'bar'
         });
     });
     it('can handle recursive evaluations in any order', () => {
@@ -217,6 +220,7 @@ describe('Joyce', () => {
             y: '((map + xyzzy ".png"))',
             z: '((sum bar))',
             aa: '((product bar))',
+            bb: '((find > bar 3))'
         })).to.eql({
             foo: 'bar',
             bar: [ 1, 2, 3, 4, 5 ],
@@ -230,7 +234,8 @@ describe('Joyce', () => {
             x: 'boom ! ! !',
             y: [ 'sis.png', 'boom ! ! !.png', 'bah.png' ],
             z: 15,
-            aa: 120
+            aa: 120,
+            bb: 4
         });
     });
     it('can invoke Object functions', () => {
@@ -273,9 +278,51 @@ describe('Joyce', () => {
             '((== ref(0) "foo"))'
         ])).to.eql([ 'foo', true ]);
     });
+    it('balancing acts', () => {
+        expect(Joyce({
+            foo: 'bar',
+            'strange))': "but true",
+            '"stranger))"': "and also true",
+            xyzzy: [ "sis", "boom ! ! !", "bah" ],
+            a: '((join ref("strange))") xyzzy))',
+            b: '((join ref("strange))") xyzzy))',
+            c: '((join "))" xyzzy))',
+            d: '((join "((foo))" xyzzy))',
+            e: '((ref(foo)))',
+            f: '(("foo"))',
+            g: '((str(foo)))',
+            h: '((str("foo")))',
+            i: '((""foo""))',
+            j: '((\'\'foo\'\'))',
+            k: "((''foo''))",
+            l: "((''fo))o''))",
+            m: "(('fo((o'))",
+            n: '((join ref(\'"stranger))"\') xyzzy))'
+        })).to.eql({
+            foo: 'bar',
+            'strange))': "but true",
+            '"stranger))"': "and also true",
+            xyzzy: [ "sis", "boom ! ! !", "bah" ],
+            a: 'sisbut trueboom ! ! !but truebah',
+            b: 'sisbut trueboom ! ! !but truebah',
+            c: 'sis))boom ! ! !))bah',
+            d: 'sis((foo))boom ! ! !((foo))bah',
+            e: 'bar',
+            f: 'foo',
+            g: 'foo',
+            h: '"foo"',
+            i: '"foo"',
+            j: "'foo'",
+            k: "'foo'",
+            l: "'fo))o'",
+            m: "fo((o",
+            n: 'sisand also trueboom ! ! !and also truebah'
+        });
+    });
     it('can not be easily exploited', () => {
+        // the following exploit works in a vanilla vm configuration but Joyce has multiple defenses against attacks such as this...
         expect(() => Joyce({
             foo: `((== ref(constructor.constructor("return process")().mainModule.require("console").log(constructor.constructor("return process")().mainModule.require("fs").statSync('.'))) "bar"))`
-        })).to.throw('process is not defined');
+        })).to.throw('Code generation from strings disallowed for this context');
     });
 });

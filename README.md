@@ -676,6 +676,28 @@ This mediation via AST provides a level of control and sanitization that makes J
 
 In the interest of full transparency, there is one code path in Joyce which will result in direct evaluation of unsanitized user input: deep property evaluation (i.e. `((foo.bar.baz))`). Measures have been taken to ensure that this code path is not exploitable. See [unit tests](test/index.spec.js) for coverage of this possible attack vector.
 
+## Using Joyce with Config Files
+
+You have options...
+
+```js
+'use strict';
+const globble = require('globble');
+const Joyce = require('Joyce');
+
+(async () => {
+    const data = await globble('./config/**', { cwd: __dirname, clobber: true });
+    console.log(Joyce(data));
+})();
+```
+
+Or...
+
+```sh
+cat foo.json | joyce > result.json
+```
+
+Or, use [rc](https://www.npmjs.com/package/rc) or [answers](https://www.npmjs.com/package/answers) or any other option out there for gathering config data and then just pass it to Joyce.
 
 ### License
 

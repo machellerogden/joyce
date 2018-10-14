@@ -4,7 +4,7 @@
 
 [![Version](https://img.shields.io/npm/v/joyce.svg)]() [![Travis](https://img.shields.io/travis/machellerogden/joyce.svg)]() [![License](https://img.shields.io/npm/l/joyce.svg)]()
 
-Joyce is a powerful expression language for dynamically data processing. It's particularly useful for processing configuration data.
+Joyce is a powerful expression language for dynamic data processing. It's particularly useful for processing configuration data.
 
 ## Installation
 
@@ -211,7 +211,7 @@ Joyce({
 
 #### <
 
-Less than.
+Less than
 
 ```js
 Joyce({
@@ -379,7 +379,7 @@ Joyce({
 // }
 ```
 
-When only one arg is given, array elements will be join by an empty string.
+When only one arg is given, array elements will be joined by an empty string.
 
 ```js
 Joyce({
@@ -559,7 +559,7 @@ Joyce({
         baz: "bim",
         bam: "boom"
     },
-    bar: '((keys foo))'
+    bar: '((values foo))'
 });
 
 // {
@@ -594,7 +594,7 @@ For operations which accept operator arugments, the follower operators are defin
 
 ## Explict Type Casting
 
-There are times when you will want to explicitly cast as arguments as a certain type.
+There are times when you will want to explicitly cast arguments as a certain type.
 
 For instance, consider the following.
 

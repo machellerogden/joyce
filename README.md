@@ -24,7 +24,7 @@ npm i -g joyce
 
 ## Usage
 
-Joyce accepts any type of value. If that value happens to have contain the pattern `((.+))` then the inner form of that pattern will be parsed and evaluated within the context of the originally given value.
+Joyce accepts any type of value. Expressions are represented inside strings as `{{<expression>}}`. Expressions are parsed and evaluated within the context of the originally given value.
 
 ### A Basic Example
 
@@ -33,7 +33,7 @@ const Joyce = require('joyce');
 
 Joyce({
     hello: 'world',
-    isWorld: '((== hello "world"))'
+    isWorld: '{{hello == "world"}}'
 });
 
 // {
@@ -51,9 +51,9 @@ const Joyce = require('joyce');
 
 Joyce({
     foo: [ 1, 2, 3, 4 ],
-    bar: '((filter >= foo 3))',
-    baz: '((join "-" foo))',
-    qux: '((foo)), a "note" to follow (("foo"))'
+    bar: '{{filter >= foo 3}}',
+    baz: '{{join "-" foo}}',
+    qux: '{{foo}}, a "note" to follow {{"foo"}}'
 });
 
 // {
@@ -67,7 +67,7 @@ Joyce({
 ### Command-Line Usage
 
 ```sh
-echo '{"foo":"bar","bar":"((== foo \"bar\"))"}' | joyce
+echo '{"foo":"bar","bar":"{{== foo \"bar\"}}"}' | joyce
 
 # {
 #     "foo": "bar",
@@ -75,43 +75,49 @@ echo '{"foo":"bar","bar":"((== foo \"bar\"))"}' | joyce
 # }
 ```
 
-## API
-
 ### Expressions
 
 All expressions are strings and take the following form.
 
 ```
-((operation ...args))
+{{expression}}
 ```
 
 Expression can be used at any position within a string.
 
 ```
-plain text ((operation ...args)) plain text
+plain text {{expression}} plain text
 ```
 
 Multiple expressions can be used in a single string, but expressions cannot be nested.
 
 ```
-plain text ((operation ...args)) plain text ((operation ...args)) plain text
+plain text {{expression}} plain text {{expression}} plain text
+```
+
+For expressions containing a single operator argument, the operator may be in any position. This allows you to choose your own style depending on whether you prefer [polish notation](https://en.wikipedia.org/wiki/Polish_notation) or [infix notation](https://en.wikipedia.org/wiki/Infix_notation).
+
+```
+{{operator ...operands}}
+```
+
+```
+{{operand operator operand}}
+```
+
+For expressions containing an operation which acts upon an operator, the operation name must precede the operator.
+
+```
+{{operation operator ...operands}}
 ```
 
 Operation names are case insensitive.
 
 ```
-((OPERATION ...args))
+{{OPERATION operator ...operands}}
 ```
 
-Operations with operator arguments use [polish notation](https://en.wikipedia.org/wiki/Polish_notation).
-
-```
-((OPERATION operator ...args))
-```
-
-### Operations
-
-The following operators are supported.
+## API
 
 #### ==
 
@@ -120,12 +126,14 @@ Loose equality
 ```js
 Joyce({
     foo: 123,
-    bar: '((== foo "123"))'
+    bar: '{{foo == "123"}}',
+    baz: '{{== foo "123"}}'
 });
 
 // {
 //   foo: 123,
-//   bar: true
+//   bar: true,
+//   baz: true
 // }
 ```
 
@@ -136,12 +144,14 @@ Strict equality
 ```js
 Joyce({
     foo: 123,
-    bar: '((=== foo "123"))'
+    bar: '{{foo === "123"}}',
+    baz: '{{=== foo "123"}}'
 });
 
 // {
 //   foo: 123,
-//   bar: false
+//   bar: false,
+//   baz: false
 // }
 ```
 
@@ -152,12 +162,14 @@ Loose inequality
 ```js
 Joyce({
     foo: 123,
-    bar: '((!= foo "123"))'
+    bar: '{{foo != "123"}}',
+    baz: '{{!= foo "123"}}'
 });
 
 // {
 //   foo: 123,
-//   bar: false
+//   bar: false,
+//   baz: false
 // }
 ```
 
@@ -168,12 +180,14 @@ Strict inequality
 ```js
 Joyce({
     foo: 123,
-    bar: '((!== foo "123"))'
+    bar: '{{foo !== "123"}}',
+    baz: '{{!== foo "123"}}'
 });
 
 // {
 //   foo: 123,
-//   bar: true
+//   bar: true,
+//   baz: true
 // }
 ```
 
@@ -184,12 +198,14 @@ Greater than
 ```js
 Joyce({
     foo: 2,
-    bar: '((> foo 2))'
+    bar: '{{foo > 2}}',
+    baz: '{{> foo 2}}'
 });
 
 // {
 //   foo: 2,
-//   bar: false
+//   bar: false,
+//   baz: false
 // }
 ```
 
@@ -200,12 +216,14 @@ Greater than or equal to
 ```js
 Joyce({
     foo: 2,
-    bar: '((>= foo 2))'
+    bar: '{{foo >= 2}}',
+    baz: '{{>= foo 2}}'
 });
 
 // {
 //   foo: 2,
-//   bar: true
+//   bar: true,
+//   baz: true
 // }
 ```
 
@@ -216,12 +234,14 @@ Less than
 ```js
 Joyce({
     foo: 2,
-    bar: '((< foo 2))'
+    bar: '{{foo < 2}}',
+    baz: '{{< foo 2}}'
 });
 
 // {
 //   foo: 2,
-//   bar: false
+//   bar: false,
+//   baz: false
 // }
 ```
 
@@ -232,12 +252,14 @@ Less than or equal to
 ```js
 Joyce({
     foo: 2,
-    bar: '((<= foo 2))'
+    bar: '{{foo <= 2}}',
+    baz: '{{<= foo 2}}'
 });
 
 // {
 //   foo: 2,
-//   bar: true
+//   bar: true,
+//   baz: true
 // }
 ```
 
@@ -248,12 +270,14 @@ Modulus
 ```js
 Joyce({
     foo: 101,
-    bar: '((% foo 5))'
+    bar: '{{% foo 5}}',
+    baz: '{{foo % 5}}'
 });
 
 // {
 //   foo: 100,
-//   bar: 1
+//   bar: 1,
+//   baz: 1
 // }
 ```
 
@@ -264,12 +288,14 @@ Add
 ```js
 Joyce({
     foo: 1,
-    bar: '((+ foo 1))'
+    bar: '{{+ foo 1}}',
+    baz: '{{foo + 1}}'
 });
 
 // {
 //   foo: 1,
-//   bar: 2
+//   bar: 2,
+//   baz: 2
 // }
 ```
 
@@ -278,12 +304,14 @@ Concat
 ```js
 Joyce({
     foo: 'a',
-    bar: '((+ foo "b"))'
+    bar: '{{foo + "b"}}',
+    baz: '{{+ foo "b"}}'
 });
 
 // {
 //   foo: 'a',
-//   bar: 'ab'
+//   bar: 'ab',
+//   baz: 'ab'
 // }
 ```
 
@@ -294,12 +322,14 @@ Subtract
 ```js
 Joyce({
     foo: 1,
-    bar: '((- foo 1))'
+    bar: '{{foo - 1}}',
+    baz: '{{- foo 1}}'
 });
 
 // {
 //   foo: 1,
-//   bar: 0
+//   bar: 0,
+//   baz: 0
 // }
 ```
 
@@ -310,12 +340,14 @@ Multiply
 ```js
 Joyce({
     foo: 100,
-    bar: '((* foo 5))'
+    bar: '{{foo * 5}}',
+    baz: '{{* foo 5}}'
 });
 
 // {
 //   foo: 100,
-//   bar: 500
+//   bar: 500,
+//   baz: 500
 // }
 ```
 
@@ -326,14 +358,18 @@ Divide
 ```js
 Joyce({
     foo: 100,
-    bar: '((/ foo 5))'
+    bar: '{{foo / 5}}',
+    baz: '{{/ foo 5}}'
 });
 
 // {
 //   foo: 100,
-//   bar: 20
+//   bar: 20,
+//   baz: 20
 // }
 ```
+
+### Operators
 
 #### filter
 
@@ -342,7 +378,7 @@ Filter an array.
 ```js
 Joyce({
     foo: [ 1, 2, 3, 4, 5 ],
-    bar: '((filter % foo 2))'
+    bar: '{{filter % foo 2}}'
 });
 
 // {
@@ -354,7 +390,7 @@ Joyce({
 ```js
 Joyce({
     foo: [ 1, 2, 3, 4 ],
-    bar: '((filter <= foo 2))'
+    bar: '{{filter <= foo 2}}'
 });
 
 // {
@@ -370,7 +406,7 @@ Join an array
 ```js
 Joyce({
     foo: [ "a", "b", "c" ],
-    bar: '((join "-" foo))'
+    bar: '{{join "-" foo}}'
 });
 
 // {
@@ -384,7 +420,7 @@ When only one arg is given, array elements will be joined by an empty string.
 ```js
 Joyce({
     foo: [ "a", "b", "c" ],
-    bar: '((join foo))'
+    bar: '{{join foo}}'
 });
 
 // {
@@ -397,12 +433,12 @@ Joyce({
 
 Returns true if every element in the given array match the given predicate, otherwise returns false.
 
-Call signature is `((every operator array comparison-value))`.
+Call signature is `{{every operator array comparison-value}}`.
 
 ```js
 Joyce({
     foo: [ 1, 2, 3, 4, 5 ],
-    bar: '((every < foo 6))'
+    bar: '{{every < foo 6}}'
 });
 
 // {
@@ -414,7 +450,7 @@ Joyce({
 ```js
 Joyce({
     foo: [ 1, 2, 3, 4, 5 ],
-    bar: '((every > foo 4))'
+    bar: '{{every > foo 4}}'
 });
 
 // {
@@ -427,12 +463,12 @@ Joyce({
 
 Returns true if some of the elements in the given array match the given predicate, otherwise returns false.
 
-Call signature is `((some operator array comparison-value))`.
+Call signature is `{{some operator array comparison-value}}`.
 
 ```js
 Joyce({
     foo: [ 1, 2, 3, 4, 5 ],
-    bar: '((some > foo 4))'
+    bar: '{{some > foo 4}}'
 });
 
 // {
@@ -445,12 +481,12 @@ Joyce({
 
 Returns first element in a given array which matches a given predicate.
 
-Call signature is `((find operator array comparison-value))`.
+Call signature is `{{find operator array comparison-value}}`.
 
 ```js
 Joyce({
     foo: [ 1, 2, 3, 4, 5 ],
-    bar: '((find > foo 3))'
+    bar: '{{find > foo 3}}'
 });
 
 // {
@@ -463,12 +499,12 @@ Joyce({
 
 Performs a binary operation on each element in a given array and return a new array.
 
-Call signature is `((map operator array subject-value))`.
+Call signature is `{{map operator array subject-value}}`.
 
 ```js
 Joyce({
     foo: [ "file1", "file2", "file3" ],
-    bar: '((map + foo ".png"))'
+    bar: '{{map + foo ".png"}}'
 });
 
 // {
@@ -486,7 +522,7 @@ Adds or concats the elements of a given array.
 ```js
 Joyce({
     foo: [ 1, 2, 3, 4, 5 ],
-    bar: '((sum foo))'
+    bar: '{{sum foo}}'
 });
 
 // {
@@ -498,7 +534,7 @@ Joyce({
 ```js
 Joyce({
     foo: [ "a", "b", "c" ],
-    bar: '((sum foo))'
+    bar: '{{sum foo}}'
 });
 
 // {
@@ -518,7 +554,7 @@ Multiply the elements of a given array.
 ```js
 Joyce({
     foo: [ 1, 2, 3, 4, 5 ],
-    bar: '((product foo))'
+    bar: '{{product foo}}'
 });
 
 // {
@@ -537,7 +573,7 @@ Joyce({
         baz: "bim",
         bam: "boom"
     },
-    bar: '((keys foo))'
+    bar: '{{keys foo}}'
 });
 
 // {
@@ -559,7 +595,7 @@ Joyce({
         baz: "bim",
         bam: "boom"
     },
-    bar: '((values foo))'
+    bar: '{{values foo}}'
 });
 
 // {
@@ -601,7 +637,7 @@ For instance, consider the following.
 ```js
 Joyce({
     "==": "foo",
-    bar: '((== == "foo"))'
+    bar: '{{== == "foo"}}'
 });
 
 // {
@@ -617,7 +653,7 @@ This is easily fixed.
 ```js
 Joyce({
     "==": "foo",
-    bar: '((== ref("==") "foo"))'
+    bar: '{{ref{"=="} == "foo"}}'
 });
 
 // {
@@ -626,11 +662,11 @@ Joyce({
 // }
 ```
 
-Note that we not only wrap the `==` argument in `ref()` but we also quote it. Anything in which you would have to use array-notation in JavaScript when referencing a property must be quoted.
+Note that we not only wrap the `==` argument in `ref{}` but we also quote it. Anything in which you would have to use array-notation in JavaScript when referencing a property must be quoted.
 
 All argument types can be explictly cast if you find that the need arises.
 
-The casting notation is always: `type(value)`
+The casting notation is always: `type{value}`
 
 The following types are supported:
 
@@ -652,7 +688,7 @@ Joyce({
             bah: [ 'foo', 'bar', 'baz' ]
         }
     },
-    bar: '((== sis.boom.bah[1] "bar"))'
+    bar: '{{sis.boom.bah[1] == "bar"}}'
 });
 
 // {
@@ -674,7 +710,7 @@ Most ELs are open to security vulnerabilities because they depend on dynamic cod
 
 This mediation via AST provides a level of control and sanitization that makes Joyce one of the safest ELs out there.
 
-In the interest of full transparency, there is one code path in Joyce which will result in direct evaluation of unsanitized user input: deep property evaluation (i.e. `((foo.bar.baz))`). Measures have been taken to ensure that this code path is not exploitable. See [unit tests](test/index.spec.js) for coverage of this possible attack vector.
+In the interest of full transparency, there is one code path in Joyce which will result in direct evaluation of unsanitized user input: deep property evaluation (i.e. `{{foo.bar.baz}}`). Measures have been taken to ensure that this code path is not exploitable. See [unit tests](test/index.spec.js) for coverage of this possible attack vector.
 
 ## Using Joyce with Config Files
 

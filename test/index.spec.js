@@ -95,6 +95,22 @@ describe('Joyce', () => {
             n: 20.2
         });
     });
+    it('can express conditions', () => {
+        expect(Joyce({
+            foo: true,
+            bar: '{{foo ? "foo is true" : "foo is false"}}'
+        })).to.eql({
+            foo: true,
+            bar: "foo is true"
+        });
+        expect(Joyce({
+            foo: false,
+            bar: '{{foo ? "foo is true" "foo is false"}}'
+        })).to.eql({
+            foo: false,
+            bar: "foo is false"
+        });
+    });
     it('can filter', () => {
         expect(Joyce({
             foo: [ 1, 2, 3 ],

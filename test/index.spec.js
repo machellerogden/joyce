@@ -110,6 +110,24 @@ describe('Joyce', () => {
             foo: false,
             bar: "foo is false"
         });
+        expect(Joyce({
+            foo: "foo",
+            bar: '{{foo ? eval{"{{foo}}/"} "/"}}'
+        })).to.eql({
+            foo: "foo",
+            bar: "foo/"
+        });
+         expect(Joyce({
+            foo: true,
+            bar: '{{foo ? eval{"foo is {{boom}}"} : eval{"foo is {{splat}}"}}}',
+            boom: 'bam',
+            splat: 'squash'
+        })).to.eql({
+            foo: true,
+            bar: "foo is bam",
+            boom: 'bam',
+            splat: 'squash'
+        });
     });
     it('can filter', () => {
         expect(Joyce({

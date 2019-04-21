@@ -89,10 +89,14 @@ Expression can be used at any position within a string.
 plain text {{expression}} plain text
 ```
 
-Multiple expressions can be used in a single string, but expressions cannot be nested.
+Multiple expressions can be used in a single string. Nesting expressions is supported, but not arbitrarily. If you which to nest expressions you must use the `eval` operation (see examples below).
 
 ```
 plain text {{expression}} plain text {{expression}} plain text
+```
+
+```
+plain text {{expression}} plain text {{expression eval{"argument text containing a nested {{expression}}"}}} plain text
 ```
 
 For expressions containing a single operator argument, the operator may be in any position. This allows you to choose your own style depending on whether you prefer [polish notation](https://en.wikipedia.org/wiki/Polish_notation) or [infix notation](https://en.wikipedia.org/wiki/Infix_notation).
@@ -604,6 +608,44 @@ Joyce({
 //     bam: "boom"
 //   },
 //   bar: [ "bim", "boom" ]
+// }
+```
+
+#### ternary
+
+Express simple conditions as a ternary.
+
+```js
+Joyce({
+    foo: true,
+    bar: '{{foo ? "foo is true" : "foo is false"}}'
+});
+
+// {
+//   foo: true,
+//   bar: "foo is true"
+// }
+```
+
+#### eval
+
+Nest joyce expressions with eval.
+
+Note: If the expression passed to `eval` contains spaces you must quote the expression.
+
+```js
+Joyce({
+    foo: true,
+    bar: '{{foo ? eval{"foo is {{boom}}"} : eval{"foo is {{splat}}"}}}',
+    boom: 'bam',
+    splat: 'squash'
+});
+
+// {
+//   foo: true,
+//   bar: "foo is bam",
+//   boom: 'bam',
+//   splat: 'squash'
 // }
 ```
 

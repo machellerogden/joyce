@@ -89,14 +89,16 @@ Expression can be used at any position within a string.
 plain text {{expression}} plain text
 ```
 
-Multiple expressions can be used in a single string. Nesting expressions is supported, but not arbitrarily. If you which to nest expressions you must use the `eval` operation (see examples below).
+Multiple expressions can be used in a single string.
 
 ```
 plain text {{expression}} plain text {{expression}} plain text
 ```
 
+Nesting expressions is supported, but not arbitrarily. If you which to nest expressions you must use the `eval` operation (see examples below). Expressions can only be nested one level deep.
+
 ```
-plain text {{expression}} plain text {{expression eval{"argument text containing a nested {{expression}}"}}} plain text
+{{expression eval{"{{expression}}"}}}
 ```
 
 For expressions containing a single operator argument, the operator may be in any position. This allows you to choose your own style depending on whether you prefer [polish notation](https://en.wikipedia.org/wiki/Polish_notation) or [infix notation](https://en.wikipedia.org/wiki/Infix_notation).

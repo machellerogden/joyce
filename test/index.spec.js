@@ -129,6 +129,26 @@ describe('Joyce', () => {
             splat: 'squash'
         });
     });
+    it('can nest expressions', () => {
+        expect(Joyce({
+            foo: true,
+            bar: true,
+            qux: '{{foo ? eval{"{{bar ? \"bar\" : \"foo\" }}"} : false}}'
+        })).to.eql({
+            foo: true,
+            bar: true,
+            qux: "bar"
+        });
+        expect(Joyce({
+            foo: true,
+            bar: false,
+            qux: '{{foo ? eval{"{{bar ? \"bar\" : \"foo\" }}"} : false}}'
+        })).to.eql({
+            foo: true,
+            bar: false,
+            qux: "foo"
+        });
+    });
     it('can filter', () => {
         expect(Joyce({
             foo: [ 1, 2, 3 ],
